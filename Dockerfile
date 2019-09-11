@@ -9,5 +9,6 @@ RUN echo 'Hello From Build...'
 
 EXPOSE 80
 
+WORKDIR /etc
+
 ENTRYPOINT [ "nginx","-g","daemon off;" ]
-CMD [ "-h" ]
