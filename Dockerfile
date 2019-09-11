@@ -9,6 +9,9 @@ RUN echo 'Hello From Build...'
 
 EXPOSE 80
 
+ENV DATABASE_IP 80.54.56.23
+ENV DATABASE_USER pakito
+
 WORKDIR /etc
 
 ENTRYPOINT [ "nginx","-g","daemon off;" ]
