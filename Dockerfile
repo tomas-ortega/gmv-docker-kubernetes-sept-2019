@@ -7,6 +7,10 @@ RUN echo '<marquee>Hello GMV</marquee>' \
 
 COPY index.html /var/www/html/index.html
 
+RUN useradd pakito
+
+#USER pakito
+
 RUN echo 'Hello From Build...'
 
 EXPOSE 80
