@@ -1,0 +1,94 @@
+version: '3.7'
+
+services:
+  gmv_wordpress:
+    image: wordpress:php7.3-apache
+    container_name: gmv_container_wordpress
+    environment:
+      WORDPRESS_DB_HOST: gmv_wordpress_db
+      WORDPRESS_DB_USER: pako
+      WORDPRESS_DB_PASSWORD: pako
+      WORDPRESS_DB_NAME: gmv_wordpress_db
+    ports:
+      - "80:80"
+    depends_on:
+      - gmv_nginx
+      - gmv_wordpress_db
+    restart: always
+
+  gmv_wordpress_db:
+    image: mysql:5.7
+    environment:
+      MYSQL_DATABASE: gmv_wordpress_db
+      MYSQL_USER: pako
+      MYSQL_PASSWORD: pako
+      MYSQL_ROOT_PASSWORD: Admin12345A
+    volumes:
+      - gmv_wordpress_db:/var/lib/mysql
+
+  gmv_demo_db:
+    image: mysql:5.7
+    environment:
+      MYSQL_DATABASE: gmv_wordpress_db
+      MYSQL_USER: pako
+      MYSQL_PASSWORD: pako
+      MYSQL_ROOT_PASSWORD: Admin12345A
+
+  gmv_mysql_admin:
+    image: phpmyadmin/phpmyadmin:latest
+    ports:
+      - "82:80"
+    environment:
+      PMA_HOSTS: gmv_wordpress_db,gmv_demo_db
+    volumes:
+      - gmv_mysql_admin:/etc/phpmyadmin/config.user.inc.php
+
+  gmv_nginx:
+    image: nginx
+    container_name: gmv_container_nginx
+    ports:
+      - "81:80"
+    restart: always
+
+  gmv_portainer:
+    image: portainer/portainer
+    ports:
+      - "9000:9000"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - gmv_portainer:/data
+    restart: always
+
+  gmv_dev_machine1:
+    image: dorowu/ubuntu-desktop-lxde-vnc
+    ports:
+      - "6080:80"
+    volumes:
+      - /dev/shm:/dev/shm
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /usr/bin/docker:/usr/bin/docker
+
+  gmv_jenkins:
+    build:
+      context: ./gmv_jenkins
+    image: gmv_jenkins:1.0.0
+    ports:
+      - "8080:8080" 
+      - "50000:50000"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /usr/bin/docker:/usr/bin/docker
+
+volumes:
+  gmv_wordpress_db:
+    name: gmv_wordpress_db
+    external: true
+
+  gmv_mysql_admin:
+    name: gmv_mysql_admin
+    external: true
+
+  gmv_portainer:
+    name: gmv_portainer
+    external: true
+    
